@@ -22,5 +22,15 @@ object session {
     sqrtIter(1.0)
   }
 
+  def factorial(n: Int): Int =
+    if (n == 1) n else n * factorial(n-1)
+
+  def factorial2(n: Int): Int = {
+    def tail_factorial(acc: Int, n: Int): Int =
+      if (n == 1) acc
+      else tail_factorial(acc * n, n-1)
+
+    tail_factorial(1, n)
+  }
 
 }
