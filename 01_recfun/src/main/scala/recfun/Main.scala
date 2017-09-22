@@ -14,25 +14,31 @@ object Main {
    * Exercise 1
    */
   def pascal(column: Int, row: Int): Int = {
-    if (column < 0) return 0
-    if (row < 0) return 0
-    if (column == 0 && row == 0) return 1
-    else pascal(column-1, row-1) + pascal(column, row-1)
+    if (column < 0)
+      0
+    else if (row < 0)
+      0
+    else if (column == 0 && row == 0)
+      1
+    else
+      pascal(column-1, row-1) + pascal(column, row-1)
   }
 
   /**
    * Exercise 2
    */
   def balance(chars: List[Char]): Boolean = {
-    def iterBalanced(opened: Int, closed: Int, chars: List[Char]): Boolean = {
-      if (closed > opened) return false
-      if (chars.isEmpty) return (opened == closed)
-
-      val char = chars.head
-      iterBalanced(
-        increaseIf(char, '(', opened),
-        increaseIf(char, ')', closed),
-        chars.tail)
+    def iterBalanced(opened: Int, closed: Int, chars: List[Char]): Boolean =
+      if (closed > opened)
+        false
+      else if (chars.isEmpty)
+        (opened == closed)
+      else {
+        val char = chars.head
+        iterBalanced(
+          increaseIf(char, '(', opened),
+          increaseIf(char, ')', closed),
+          chars.tail)
     }
 
     def increaseIf(charA: Char, charB: Char, count: Int): Int =
