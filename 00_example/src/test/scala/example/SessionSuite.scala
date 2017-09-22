@@ -16,6 +16,7 @@ class ScratchpadSuite extends FlatSpec with Matchers {
   "An recursive implementatoin" should "return same values" in {
     val r = new scala.util.Random
     val randomInt = r.nextInt(10000)
+
     factorial(randomInt) should be (factorial2(randomInt))
   }
 
