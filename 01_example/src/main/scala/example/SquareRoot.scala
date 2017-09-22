@@ -1,22 +1,26 @@
 package example
 
 object session {
-  def sqrt(x: Double): Double =
-    sqrtIter(1.0, x)
+  def sqrt(x: Double): Double = {
 
-  def sqrtIter(guess: Double, x: Double) : Double =
-    if (guessGoodEnough(guess, x)) guess
-    else sqrtIter(improve(guess, x), x)
+    def sqrtIter(guess: Double) : Double =
+      if (guessGoodEnough(guess)) guess
+      else sqrtIter(improve(guess))
 
-  def guessGoodEnough(guess: Double, x: Double): Boolean =
-    abs(guess * guess - x) < (x * 0.000000001)
+    def guessGoodEnough(guess: Double): Boolean =
+      abs(guess * guess - x) < (x * 1e-8)
 
-  def abs(x: Double): Double =
-    if (x < 0) -x else x
+    def abs(n: Double): Double =
+      if (n < 0) -n else n
 
-  def improve(guess: Double, x: Double): Double =
-    mean(guess, x / guess)
+    def improve(guess: Double): Double =
+      mean(guess, x / guess)
 
-  def mean(x: Double, y: Double): Double =
-    (x + y) / 2
+    def mean(j: Double, k: Double): Double =
+      (j + k) / 2
+
+    sqrtIter(1.0)
+  }
+
+
 }
