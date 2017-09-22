@@ -2,6 +2,8 @@ name := course.value + "-" + assignment.value
 
 scalaVersion := "2.11.7"
 
+ensimeScalaVersion := scalaVersion.value
+
 scalacOptions ++= Seq("-deprecation")
 
 // grading libraries
