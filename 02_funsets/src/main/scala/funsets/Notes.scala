@@ -86,6 +86,11 @@ object FixedPointNotes {
 
 
 object RationalNubmersNotes {
+  object Rational {
+    def apply(x: Int, y: Int): Rational =
+      new Rational(x, y)
+  }
+
   class Rational(x: Int, y: Int)  {
     private def gcd(a: Int, b: Int): Int =
       if (b == 0) a
