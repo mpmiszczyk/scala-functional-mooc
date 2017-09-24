@@ -1,0 +1,18 @@
+* Lookse notes from lectures
+** Anonymus functions as synctactic suger
+
+Each anonymus function could be expressed as function definition and
+return of function name
+#+BEGIN_SRC scala
+(x: Int) => x*x*x
+#+END_SRC
+to
+#+BEGIN_SRC scala
+{def f(x: Int): Int = x*x*x; f}
+#+END_SRC
+(with ~{}~ to ensure that name ~f~ will not be overriten)
+
+I do prefere much more Lisp approach, where ~defun~ is synctactic
+sugger (or even macro) over ~(def (lambda (..) ... ))~.  It is just
+much cleaner.
+
