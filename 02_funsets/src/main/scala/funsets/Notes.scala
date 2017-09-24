@@ -99,11 +99,17 @@ object RationalNubmersNotes {
     val numer: Int = x / gcd(x,y)
     val denom: Int = y / gcd(x,y)
 
-    val strRepresantaion = f"Rational ${numer}/${denom}"
+    def + (other: Rational): Rational =
+      Rational(
+        (numer * other.denom + other.numer * denom),
+        (denom * other.denom)
+      )
 
+    def unary_- =
+      Rational( - (numer), denom)
 
-
-    override def toString() = strRepresantaion
+    def - (other: Rational): Rational =
+      this + (-other)
 
     override def equals(other: Any): Boolean = other match {
       case other: Rational =>
@@ -111,9 +117,19 @@ object RationalNubmersNotes {
       case _ => false
     }
 
-    override def hashCode() = {
+    override def hashCode() =
       numer.hashCode + denom.hashCode
-    }
 
+    def < (other: Rational): Boolean =
+      (numer * other.denom) < (other.numer * denom)
+
+
+    val strRepresantaion = f"Rational ${numer}/${denom}"
+
+    override def toString() = strRepresantaion
   }
+
+  def max(a: Rational, b: Rational): Rational =
+    if (a < b) b
+    else a
 }
