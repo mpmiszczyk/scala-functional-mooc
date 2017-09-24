@@ -110,5 +110,44 @@ class FunSetSuite extends FunSuite {
     }
   }
 
+  trait TestSetsUnions extends TestSets {
+      val s12 = union(s1,s2)
+      val s23 = union(s2,s3)
+
+  }
+
+  test("intersect contains only elements that belong to both sets") {
+    new TestSetsUnions {
+      val i2 = intersect(s12, s23)
+
+      assert(contains(i2, 2))
+      assert(!contains(i2, 1))
+      assert(!contains(i2, 3))
+      assert(!contains(i2, 4))
+    }
+  }
+
+  test("diff contains only elements in first set, but not the other"){
+    new TestSetsUnions{
+      val d = diff(s12, s23)
+
+      assert(contains(d, 1))
+      assert(!contains(d, 2))
+      assert(!contains(d, 3))
+      assert(!contains(d, 5))
+    }
+  }
+
+  test("filter return subset of set for which `p` holds"){
+    new TestSetsUnions{
+      def even = (x: Int) => (x % 2) == 0
+      val f = filter(s12,even)
+
+      assert(!contains(f, 1), "in s12, but not even")
+      assert(contains(f, 2), "even and in s12")
+      assert(!contains(f, 3), "was not in s12")
+      assert(!contains(f, 4), "is even but was not in s12")
+    }
+  }
 
 }
