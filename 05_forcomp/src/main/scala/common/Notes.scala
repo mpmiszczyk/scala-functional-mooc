@@ -21,6 +21,24 @@ object Session {
       merge(mergeSort(first)(lt), mergeSort(second)(lt)) // to many `lt`
   }
 
-  
 
+  def squareList1(xs: List[Int]): List[Int] =
+    xs match {
+      case Nil => Nil
+      case y :: ys => y*y :: squareList1(ys)
+    }
+
+  def squareList2(xs: List[Int]): List[Int] =
+    xs map (x => x*x)
+
+
+  def pack[T](xs: List[T]): List[List[T]] = xs match {
+    case Nil => Nil
+    case x :: xs1 =>
+      val (same, rest) = xs span (y => y == x)
+      same :: pack(rest)
+  }
+
+  def encode[T](list: List[T]): List[(T, Int)] =
+    pack (list) map (listOfsame => (listOfsame.head, listOfsame.length))
 }
