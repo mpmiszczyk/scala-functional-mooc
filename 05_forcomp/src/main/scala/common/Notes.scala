@@ -42,3 +42,43 @@ object Session {
   def encode[T](list: List[T]): List[(T, Int)] =
     pack (list) map (listOfsame => (listOfsame.head, listOfsame.length))
 }
+
+
+
+object Nqueens{
+  type Position = (Int, Int)
+
+  def queens(boardSize: Int): Set[List[Position]] = {
+    def placeQueens(row: Int): Set[List[Position]] = {
+      if (row == 0) Set(List())
+      else
+        for {
+          queens <- placeQueens(row-1)
+          column <-  1 to boardSize
+          if (queens forall (queen => isSafeFromQueen((column,row), queen)))
+        } yield (column, row) :: queens
+    }
+
+    placeQueens(boardSize)
+  }
+
+  def isSafeFromQueen(position: Position, queen: Position ): Boolean = {
+    !sameRow(position, queen) &&
+    !sameColumn(position, queen) &&
+    !sameDiagonal(position, queen)
+  }
+
+
+
+  def sameRow(p1: Position, p2: Position): Boolean =
+    p1._2 == p2._2
+
+
+  def sameColumn(p1: Position, p2: Position): Boolean =
+    p1._1 == p2._1
+
+
+  def sameDiagonal(p1: Position, p2: Position): Boolean =
+    (math.abs(p1._1 - p1._2) == math.abs(p2._1 - p2._2)) ||
+      (p1._1 + p1._2 == p2._1 + p2._2)
+}
