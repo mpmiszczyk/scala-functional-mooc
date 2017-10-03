@@ -34,10 +34,17 @@ object Anagrams {
    *
    *  Note: you must use `groupBy` to implement this method!
    */
-  def wordOccurrences(w: Word): Occurrences = ???
+  def wordOccurrences(w: Word): Occurrences =
+    w.toLowerCase
+      .groupBy(identity)
+      .toList
+      .sortBy(_._1)
+      .map({case (char, chars) => (char, chars.size)})
 
   /** Converts a sentence into its character occurrence list. */
-  def sentenceOccurrences(s: Sentence): Occurrences = ???
+  def sentenceOccurrences(sentence: Sentence): Occurrences =
+    wordOccurrences(sentence mkString(""))
+
 
   /** The `dictionaryByOccurrences` is a `Map` from different occurrences to a sequence of all
    *  the words that have that occurrence count.
@@ -54,10 +61,41 @@ object Anagrams {
    *    List(('a', 1), ('e', 1), ('t', 1)) -> Seq("ate", "eat", "tea")
    *
    */
-  lazy val dictionaryByOccurrences: Map[Occurrences, List[Word]] = ???
+
+  lazy val dictionaryByOccurrences: Map[Occurrences, List[Word]] = {
+    val empty = Map[Occurrences,List[Word]]()
+    dictionary.foldLeft(empty)((dict, word) =>
+      append(dict,wordOccurrences(word), word)
+    )
+  }
+
+
+  def append(dict: Map[Occurrences, List[Word]], occ: Occurrences, word: Word): Map[Occurrences, List[Word]] =
+    dict get occ match {
+      case Some(words) => dict + (occ -> (word :: words))
+      case None => dict + (occ -> List(word))
+    }
+
+  // This implementation will not work only becouse `map.get` dosn't use
+  // `withDefault`, and will return `None`
+  // lazy val dictionaryByOccurrences: Map[Occurrences, List[Word]] = {
+  //   Map() withDefault((occu: Occurrences) => {
+  //     //permutations(occu) filter (dictionary contains _) toList
+  //     permutations(occu).toList
+  //   }
+  //   )
+
+
+  def permutations(occu: Occurrences): Iterator[Word] =
+    toAnyString(occu).permutations
+
+  def toAnyString(occu: Occurrences): Word =
+    (occu map { case (char, count) => char.toString * count }).mkString
+
 
   /** Returns all the anagrams of a given word. */
-  def wordAnagrams(word: Word): List[Word] = ???
+  def wordAnagrams(word: Word): List[Word] =
+    dictionaryByOccurrences(wordOccurrences(word))
 
   /** Returns the list of all subsets of the occurrence list.
    *  This includes the occurrence itself, i.e. `List(('k', 1), ('o', 1))`
@@ -81,7 +119,13 @@ object Anagrams {
    *  Note that the order of the occurrence list subsets does not matter -- the subsets
    *  in the example above could have been displayed in some other order.
    */
-  def combinations(occurrences: Occurrences): List[Occurrences] = ???
+  def combinations(occurrences: Occurrences): List[Occurrences] = {
+    val str = toAnyString(occurrences)
+      (0 to str.size)
+      .flatMap((n) => str.combinations(n))
+      .map(wordOccurrences _)
+      .toList
+  }
 
   /** Subtracts occurrence list `y` from occurrence list `x`.
    *
@@ -93,7 +137,23 @@ object Anagrams {
    *  Note: the resulting value is an occurrence - meaning it is sorted
    *  and has no zero-entries.
    */
-  def subtract(x: Occurrences, y: Occurrences): Occurrences = ???
+  def subtract(x: Occurrences, y: Occurrences): Occurrences =
+    y.foldLeft(x)(subtractOne _)
+      .sortBy(_._1)
+
+  def subtractOne(from: Occurrences, rem: (Char, Int)): Occurrences = {
+    val (charToRemove, countToRemove) = rem
+    from.foldLeft (List[(Char,Int)]()) ((acc: Occurrences, pair: (Char, Int)) => pair match{
+      case (char, count) if char == charToRemove =>
+        if (count - countToRemove > 0)
+          (char, count - countToRemove) :: acc
+        else
+          acc
+      case otherPair =>
+        otherPair :: acc
+    })
+  }
+
 
   /** Returns a list of all anagram sentences of the given sentence.
    *
@@ -135,5 +195,36 @@ object Anagrams {
    *
    *  Note: There is only one anagram of an empty sentence.
    */
-  def sentenceAnagrams(sentence: Sentence): List[Sentence] = ???
+  def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
+
+    def possibleSentences(
+      occur: Occurrences,
+      sentenceSoFar: Sentence,
+      acc: List[Sentence])
+        : List[Sentence] =
+
+      if (allUsed(occur))
+        sentenceSoFar :: acc
+      else
+
+        combinations(occur).flatMap((subsetOfOccur) =>
+          dictionaryByOccurrences.get(subsetOfOccur) match {
+            case None => acc
+            case Some(words) =>
+              words.flatMap((word: Word) =>
+                possibleSentences(
+                  subtract(occur, subsetOfOccur),
+                  word :: sentenceSoFar,
+                  acc)
+              )
+          }
+        )
+
+    def allUsed(occur: Occurrences) = occur.isEmpty
+
+    possibleSentences(
+      sentenceOccurrences(sentence),
+      List[Word](),
+      List[Sentence]())
+  }
 }

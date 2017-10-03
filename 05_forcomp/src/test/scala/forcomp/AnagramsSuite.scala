@@ -23,11 +23,15 @@ class AnagramsSuite extends FunSuite  {
     assert(sentenceOccurrences(List("abcd", "e")) === List(('a', 1), ('b', 1), ('c', 1), ('d', 1), ('e', 1)))
   }
 
+  test("permutations of occurances") {
+    assert(permutations(List(('a',1))).toList === List("a"))
+    assert(permutations(List(('a',1),('b',1))).toList === List("ab","ba"))
+    assert(permutations(List(('a',2),('b',1))).toList === List("aab","aba","baa"))
+  }
 
   test("dictionaryByOccurrences.get: eat") {
     assert(dictionaryByOccurrences.get(List(('a', 1), ('e', 1), ('t', 1))).map(_.toSet) === Some(Set("ate", "eat", "tea")))
   }
-
 
   test("word anagrams: married") {
     assert(wordAnagrams("married").toSet === Set("married", "admirer"))
@@ -66,7 +70,6 @@ class AnagramsSuite extends FunSuite  {
     )
     assert(combinations(abba).toSet === abbacomb.toSet)
   }
-
 
   test("sentence anagrams: []") {
     val sentence = List()
